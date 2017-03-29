@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .breaker {
+        background-color: rgb(120, 154, 65)
+      }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle, breaker
+
+# Introduction to NoSQL
+
+---
+
+class: center, middle
+
+## 23 exabytes of information was recorded and replicated in 2002.
+## We now record and transfer that much information every seven days.
+
+Robert J Moore "The Data Explosion", TEDx Philly 2010
+
+???
+
+- 23 million terabytes
+- 3 million terabytes per day
+
+---
+
+class: center, middle
+
+##  In 2011, the amount of information created and replicated will surpass 1.8 zettabytes
+## - growing by a factor of 9 in just five years
+
+IDC "Extracting Value from Chaos", 2011
+
+???
+
+- 1.8 billion terabytes
+- Build the Great iPad Wall of China—at twice the average height of the original.
+- Lately, growing faster than moores law
+
+---
+
+# Where data leads us
+
+.center[![Knowledge Hierarchy](images/knowledge_hierarchy.jpg)]
+
+???
+
+- Knowledge with insight
+- Information in context, with understanding and meaning
+- Data with interpretation
+- Facts, figures, observations
+
+---
+
+# To summarize
+
+- Data is the foundation.
+- Wisdom is the goal.
+- Computers and software are a means to get there.
+
+---
+
+# Agenda
+
+- General introduction to NoSQL databases
+    - Data model
+    - Clustering
+- Play with two of them
+- Design a system with them
+
+???
+
+# Questions are welcome!
+
+- Goal: Get a sense of what NoSQL is
+
+---
+
+class: center, middle, breaker
+
+# So, data
+
+---
+
+# Data systems
+
+- System of Record (the log, transactional)
+--
+
+- Analytics (data warehouse, data lake)
+--
+
+- Routing/temporary (stream, message queue)
+--
+
+- Application support (cache, denormalized reads)
+
+---
+
+class: center, middle
+
+![One size fits all](images/one_size_fits_all.png)
+
+---
+
+# Where can we put data?
+
+- Filesystem
+- Hierarchical databases
+- Relational databases
+- Object databases
+- NoSQL databases
+- NewSQL databases
+- Messaging/streaming systems
+
+???
+
+- NewSQL: Google Cloud Spanner, TiDB 
+- Tradeoffs, padawan.
+
+---
+
+# Relational databases
+
+- Based on a proven, mathematical model.
+- Powerful and flexible queries.
+- Looks after your data (ACID).
+- Huge amount of work put into them.
+- Good for learning about your data.
+- Every developer knows a relational database (to some degree).
+--
+
+- But they all make the same tradeoffs.
+  - Same data model (schema, normalization).
+  - Same operational characteristics (single- or few-node systems).
+
+???
+
+- ACID: Atomicity, Consistency, Isolation and Durability
+- Data model: Schema must be defined ahead of time, and must conform to the relational model (normalization) to reap the full benefits.
+
+---
+
+# NoSQL databases
+
+.center[![NoSQL databases](images/nosql_databases.png)]
+
+???
+
+- Started as a twitter hashtag
+- Inspired by papers like Dynamo and BigTable
+- make different trade-offs from relational databases
+- Two basic properties:
+    - Data model
+    - CAP
+- Much more to it than this
+
+---
+
+# Some NoSQL projects @ Uptime-IT
+
+- ALDAQ (MySQL 2014 => MongoDB 2015)
+- Vision Field Care (MongoDB, Redis 2015)
+- CowView (MySQL 2008 => mix of MySQL, MongoDB, Redis 2016)
+- Energydata.dk (Cassandra, Titan, Solr, Redis 2017?)
+
+---
+
+class: center, middle, breaker
+
+# NoSQL data models
+
+---
+
+class: center, middle
+
+![Data models](images/datamodels.png)
+
+---
+
+# Key-value
+
+.center[![Key-Value](images/keyvalue.png)]
+
+---
+
+# Document
+
+```javascript
+{
+    "id": "a04c9a85-0cca-478e-9360-832f44ac7324",
+    "ssn": "101010-1234",
+    "height": 175,
+    "weight": 81.2,
+    "diseases": [
+        "thrombosis",
+        "diabetes",
+    ],
+    "medication": [
+        "platelet inhibitors",
+        "insulin",
+    ],
+    "ct_scan": {
+        "afli": false,
+        "agatston_score": 673
+    }
+}
+```
+
+???
+
+- Query for particular documents based on field values
+- Retrieve partial document
+- Partial updates
+- Implicit schema
+- Use case: screening, claustrophobia
+
+---
+
+# Column family
+
+![Column family](images/columnfamily.png)
+
+???
+
+# Partition key
+
+- Slightly more complex than document
+- Inspired by BigTable
+- Variable number of columns
+- Design data model for read queries
+- no way to query by column value (only key and super column key)
+- http://arin.me/post/40054651676/wtf-is-a-supercolumn-cassandra-data-model
+
+---
+
+# Property graph
+
+.center[![Graph](images/propertygraph.png)]
+
+???
+
+- Relations do not equal relationships
+
+---
+
+class: center, middle, breaker
+
+# NoSQL and clustering
+
+---
+
+# Distributed system
+
+.center[![CAP example 1](images/cap_example1.png)]
+
+---
+
+# Partitioned distributed system 
+
+.center[![CAP example 2](images/cap_example2.png)]
+
+---
+
+# CAP terms
+
+.center[![CAP venn diagram](images/capvenn.png)]
+
+---
+
+# NoSQL databases in the CAP spectrum
+
+.center[![CAP NoSQL](images/nosql_cap.png)]
+
+---
+
+class: center, middle, breaker
+
+# Let's try things out
+
+---
+
+# Start up Neo4j and try Cypher
+
+```
+docker pull neo4j:3.1
+docker create -p 7474:7474 -p 7687:7687 -e "NEO4J_AUTH=none" --name myneo neo4j:3.1
+docker start myneo
+```
+
+- Visit http://localhost:7474/
+- In the editor, enter `:play cypher`
+- Run through that
+
+---
+
+# Docker intermezzo
+
+```
+docker ps
+docker stop myneo
+docker ps
+docker ps --filter "status=exited"
+docker rm myneo
+docker create -p 7474:7474 -p 7687:7687 -e "NEO4J_AUTH=none" --name myneo neo4j:3.1
+```
+
+---
+
+# Start up Scylla 
+
+```
+docker pull scylladb/scylla:1.6.1
+docker create -p=9042:9042 --name myscylla scylladb/scylla
+docker start myscylla
+docker exec -it myscylla cqlsh
+```
+
+---
+
+# Simple CQL queries 
+
+```
+CREATE KEYSPACE demo 
+    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};
+USE demo;
+CREATE TABLE people (
+    ssn text,
+    name text,
+    age int,
+    occupation text,
+    PRIMARY KEY (ssn)
+);
+INSERT INTO people (ssn, name, age, occupation) 
+    VALUES ('101010-1234', 'John Doe', 34, 'Smith');
+INSERT INTO people (ssn, name, occupation) 
+    VALUES ('101010-2345', 'Jane Doe', 'Ninja');
+SELECT * FROM people;
+DELETE FROM people where name = 'Jane Doe'; // Hm, is that going to work?
+```
+
+---
+
+# More CQL queries
+
+```
+CREATE TABLE messages (
+    to_user text,
+    sent_at timestamp,
+    from_user text,
+    body text,
+    PRIMARY KEY (to_user, sent_at)
+);
+INSERT INTO messages (to_user, sent_at, from_user, body)
+    VALUES ('John', 1490812041000, 'Jane', 'Hi');
+INSERT INTO messages (to_user, sent_at, from_user, body)
+    VALUES ('John', 1490812045000, 'Jane', 'Are you there?');
+INSERT INTO messages (to_user, sent_at, from_user, body)
+    VALUES ('John', 1490812049000, 'Jane', 'Guess not :(');
+INSERT INTO messages (to_user, sent_at, from_user, body)
+    VALUES ('Jane', 1490812051000, 'John', 'I am now!');    
+SELECT * FROM messages;
+SELECT * FROM messages where sent_at = 1490812045000;
+SELECT * FROM messages where to_user = 'John' and sent_at = 1490812045000;
+SELECT * FROM messages where to_user = 'John' and sent_at > 1490812040000;
+exit // To quit the shell
+```
+
+---
+
+class: middle, center, breaker
+
+# Now let's build* something!
+
+\* or pretend it, anyway
+
+---
+
+# TurboStuff
+
+- Lots of people want lots of free stuff 
+- They want it fast 
+- Let's model that!
+    - Use Neo4j to model all the entities and their relationships
+    - Use Scylla to ensure fast reads for particular data
+
+---
+
+# Neo4j data modelling
+
+1. Describe the client or end-user goals that motivate our model.
+2. Rewrite these goals as questions to ask of our domain.
+3. Identify the entities and the relationship that appear in these questions.
+4. Translate these entities and relationships into Cypher path expressions.
+5. Express the questions we want to ask of our domain as graph patterns using path expressions similar to the ones we used to model the domain.
+
+From [Graph Databases](https://neo4j.com/graph-databases-book/), a book focusing on Neo4j
+
+---
+
+# TurboStuff entities and relationships
+
+.center[![Graph model](images/graph_model.png)]
+
+---
+
+# Creating the initial graph
+
+```
+MATCH (n) DETACH DELETE (n);
+
+CREATE (fyn:Region {name: "Fyn"}),
+    (odense:Region {name: "Odense"}),
+    (car:Category {name: "Car"}),
+    (ferrari:Category {name: "Ferrari"}),
+    (john:User {name: "John"}),
+    (jane:User {name: "Jane"}),
+    (wish:Wish {id: 1, name: "Greatest wish"}),
+    (gift:Gift {id: 1, name: "Ferrari F40"}),
+    (odense)-[:CONTAINED_BY]->(fyn),
+    (john)-[:MAKES]->(wish),
+    (wish)-[:LOCAL_TO]->(fyn),
+    (wish)-[:MUST_BE]->(ferrari),
+    (wish)-[:MUST_BE]->(car),
+    (jane)-[:OFFERS {since: 1489492800000}]->(gift),
+    (gift)-[:BELONGS_TO]->(car),
+    (gift)-[:BELONGS_TO]->(ferrari),
+    (gift)-[:LOCAL_TO]->(odense);
+
+MATCH (n) RETURN (n);
+```
+
+---
+
+# Finding cars in Odense
+
+--
+
+``` 
+MATCH (g:Gift)-[:BELONGS_TO]->(c:Category {name: "Car"}), 
+    (g)-[:LOCAL_TO]->(r:Region {name: "Odense"})
+RETURN g;
+```
+
+---
+
+# Find the gift to resolve Johns greatest wish
+
+--
+
+``` 
+MATCH (g:Gift)-[:BELONGS_TO]->(:Category {name: "Ferrari"}),
+    (g)-[:BELONGS_TO]->(:Category {name: "Car"}),
+    (g)-[:LOCAL_TO]->(:Region {name: "Fyn"})
+RETURN g;
+``` 
+
+--
+
+## (╯°□°）╯︵ ┻━┻
+
+---
+
+# Maybe regions contained by Odense have a Ferrari?
+
+``` 
+MATCH (g:Gift)-[:BELONGS_TO]->(:Category {name: "Ferrari"}),
+    (g)-[:BELONGS_TO]->(:Category {name: "Car"}),
+    (g)-[:LOCAL_TO]->(giftRegion:Region),
+    (giftRegion)-[:CONTAINED_BY]->(wishRegion:Region {name: "Fyn"})
+RETURN g;
+```
+
+--
+
+## (•̀ᴗ•́)و 
+
+---
+
+# Relocate the Ferrari F40 to Fruens Bøge
+
+```
+MATCH (Gift {name: "Ferrari F40"})-[rel:LOCAL_TO]->(Region)
+DELETE rel;
+
+MATCH (g:Gift {name: "Ferrari F40"}),
+    (odense:Region {name: "Odense"})
+CREATE (r:Region {name: "Fruens Bøge"})-[:CONTAINED_BY]->(odense),
+    (g)-[:LOCAL_TO]->(r);
+```
+--
+
+Does the previous query to find a gift for John succeed now?
+
+---
+
+# Fix it by using variable relationship length
+
+```
+MATCH (g:Gift)-[:BELONGS_TO]->(c1:Category {name: "Ferrari"}),
+    (g:Gift)-[:BELONGS_TO]->(c2:Category {name: "Car"}),
+    (g:Gift)-[:LOCAL_TO]->(r1:Region),
+    (r1)-[:CONTAINED_BY*0..50]->(r2:Region {name: "Fyn"})
+RETURN g;
+```
+
+---
+
+# Given a wish, how do I find matching gifts?
+
+```
+MATCH (w:Wish {id: 1})-[:MUST_BE]->(c:Category)<-[:BELONGS_TO]-(g:Gift)
+RETURN DISTINCT g;
+```
+
+--
+
+```
+MATCH (w:Wish {id: 1})-[:MUST_BE]->(c:Category)<-[:BELONGS_TO]-(g:Gift),
+    (w)-[:LOCAL_TO]->(wishRegion:Region)
+        <-[:CONTAINED_BY*..50]-(giftRegion:Region)<-[:LOCAL_TO]-(g)
+RETURN DISTINCT g;
+```
+
+--
+
+But what if a gift only fulfills some of the "must bes"?
+
+---
+
+# Grow the graph
+
+```
+MATCH (car:Category {name: "Car"}),
+    (ferrari:Category {name: "Ferrari"}),
+    (odense:Region {name: "Odense"})
+CREATE (sally:User {name: "Sally"})-[:OFFERS]->(g1:Gift {id: 2, name: "Toyota Corolla"}),
+    (toyota:Category {name: "Toyota"}),
+    (england:Region {name: "England"}),
+    (g1)-[:BELONGS_TO]->(toyota),
+    (g1)-[:BELONGS_TO]->(car),
+    (g1)-[:LOCAL_TO]->(odense),
+    (sally)-[:OFFERS]->(g2:Gift {id: 3, name: "Ferrari 288 GTO"}),
+    (g2)-[:BELONGS_TO]->(ferrari),
+    (g2)-[:BELONGS_TO]->(car),
+    (g2)-[:LOCAL_TO]->(england);
+```
+
+--
+
+How many gifts now seem to satisfy John's greatest wish?
+
+---
+
+# Fix it by requiring that the number of relationships match
+
+```
+MATCH (w:Wish {id: 1})-[:MUST_BE]->(c:Category)
+WITH w, count(c) as wishCategories
+MATCH (w)-[:MUST_BE]->(c:Category)<-[:BELONGS_TO]-(g:Gift),
+    (g)-[:LOCAL_TO]->(giftRegion:Region)
+        -[:CONTAINED_BY*..50]->(wishRegion:Region)<-[:LOCAL_TO]-(w)
+WITH w, wishCategories, g, count(c) as giftCategories
+WHERE giftCategories = wishCategories
+RETURN g;
+```
+
+---
+
+# Find all wishes matching a gift
+
+```
+MATCH (g:Gift {id: 1})-[:BELONGS_TO]->(c:Category)
+WITH g, count(c) as giftCategories
+MATCH (g)-[:BELONGS_TO]->(c:Category)<-[:MUST_BE]-(w:Wish),
+    (g)-[:LOCAL_TO]->(giftRegion:Region)
+        -[:CONTAINED_BY*..50]->(wishRegion:Region)<-[:LOCAL_TO]-(w)
+WITH g, giftCategories, w, count(c) as wishCategories
+WHERE giftCategories = wishCategories
+RETURN w;
+```
+
+---
+
+# Scylla data modelling (Cassandra)
+
+- Non goals:
+    - Minimize the number of writes
+    - Minimize data duplication
+- Actual goals:
+    - Spread data evenly around the cluster
+    - Minimize the number of partitions read
+
+---
+
+# Partitions
+
+- Each table is split into partitions
+- A partition is identified by a number (the partition key)
+    - The number is calculated by hashing the primary key 
+    - E.g.: hash("john") = 4
+- *Can* hold 2 billion columns
+- *Should be* in the range of 10 to 100 MBs 
+
+---
+
+# Partitions in the cluster
+
+.center[![Scylla cluster partitions](images/scylla_cluster_partitions.png)]
+
+---
+
+# Creating the table for matches
+
+```
+docker exec -it myscylla cqlsh
+
+CREATE KEYSPACE turbostuff 
+    WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};
+USE turbostuff;
+CREATE TABLE matches (
+    user text,
+    year int,
+    month int,
+    offered timestamp,
+    wish text,
+    gift text,
+    offerer text,
+    region text,
+    categories text,
+    PRIMARY KEY ((user, year, month), offered)
+);
+```
+
+---
+
+# Test some sample data
+
+```
+INSERT INTO matches 
+    (user, year, month, offered, wish, gift, offerer, region, categories) 
+VALUES 
+    ('John', 2017, 3, 1489492800000, 'Greatest wish', 'Ferrari F40', 
+    'Jane', 'Fruens Bøge', '[Car, Ferrari]');
+INSERT INTO matches 
+    (user, year, month, offered, wish, gift, offerer, region, categories) 
+VALUES 
+    ('John', 2017, 3, 1489492700000, 'Lunch', 'Burger', 
+    'Sally', 'Odense centrum', '[Food]');
+``` 
+
+```
+SELECT * FROM matches WHERE 
+    user = 'John' AND 
+    year = 2017 AND 
+    month = 3 AND
+    offered >= 1489492700000;
+```
+
+---
+
+class: center, middle, breaker
+
+# Designing the application
+
+---
+
+class: center, breaker
+
+# Questions?
+
+Uptime-IT is looking for interns and employees
+
+troels@uptime.dk
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
