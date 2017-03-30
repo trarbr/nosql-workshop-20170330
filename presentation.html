@@ -331,9 +331,9 @@ docker create -p 7474:7474 -p 7687:7687 -e "NEO4J_AUTH=none" --name myneo neo4j:
 
 ```
 docker pull scylladb/scylla:1.6.1
-docker create -p=9042:9042 --name myscylla scylladb/scylla
-docker start myscylla
-docker exec -it myscylla cqlsh
+docker create -p=9042:9042 --name myscylla1 scylladb/scylla
+docker start myscylla1
+docker exec -it myscylla1 cqlsh
 ```
 
 ---
@@ -633,7 +633,7 @@ RETURN w;
 # Creating the table for matches
 
 ```
-docker exec -it myscylla cqlsh
+docker exec -it myscylla1 cqlsh
 
 CREATE KEYSPACE turbostuff 
     WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};
